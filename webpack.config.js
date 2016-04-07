@@ -1,4 +1,4 @@
-var bower_dir = __dirname + '/bower_component';
+var bower_dir = __dirname + '/bower_components';
 module.exports = {
   entry: ['./app/main.js'],
   resolve: {
