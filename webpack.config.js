@@ -1,27 +1,43 @@
+var webpack = require('webpack');
 var bower_dir = __dirname + '/bower_components';
-module.exports = {
-  entry: ['./app/main.js'],
+
+var config = {
+  addVendor: function(name, path) {
+    this.resolve.alias[name] = path;
+    this.module.noParse.push(new RegExp('^' + name + '$'));
+  },
+  entry: {
+    app: ['./app/main.js'],
+    vendors: ['react', 'react-dom']
+  },
   resolve: {
-    alias: {
-      'react': bower_dir + '/react/react.min.js',
-      'react-dom': bower_dir + '/react/react-dom.min.js'
-    }
+    alias: {}
   },
   output: {
     path: './build',
     filename: 'bundle.js'
   },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
+  ],
   module: {
-    noParse: [bower_dir + '/react/react.min.js', bower_dir + '/react/react-dom.min.js'],
+    noParse: [],
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
         exclude: /node_modules/,
+        loader: 'babel-loader',
         query: {
           presets: ['es2015', 'stage-0', 'react']
         }
       }
     ]
   }
-};
+}
+
+config.addVendor('react', bower_dir + '/react/react.min.js');
+config.addVendor('react-dom', bower_dir + '/react/react-dom.min.js');
+// config.addVendor('bootstrap', bower_dir + '/bootstrap/bootstrap.min.js');
+// config.addVendor('bootstrap.css', bower_dir + '/bootstrap/bootstrap.min.css');
+
+module.exports = config;
